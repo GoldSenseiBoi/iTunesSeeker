@@ -1,13 +1,33 @@
 import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 
+import AlbumDetailScreen from '../screens/AlbumDetailScreen';
 import CreatePlaylistScreen from '../screens/CreatePlaylistScreen';
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SearchScreen from '../screens/SearchScreen';
 
 const Tab = createBottomTabNavigator();
+const HomeStack = createNativeStackNavigator();
+
+function HomeStackNavigator() {
+  return (
+    <HomeStack.Navigator>
+      <HomeStack.Screen
+        name="HomeMain"
+        component={HomeScreen}
+        options={{ headerShown: true, title: 'Accueil' }}
+      />
+      <HomeStack.Screen
+        name="AlbumDetail"
+        component={AlbumDetailScreen}
+        options={{ title: 'Détail Album' }}
+      />
+    </HomeStack.Navigator>
+  );
+}
 
 export default function TabNavigator({ setIsLoggedIn }) {
   return (
@@ -25,9 +45,7 @@ export default function TabNavigator({ setIsLoggedIn }) {
         },
       })}
     >
-      <Tab.Screen name="Home">
-        {(props) => <HomeScreen {...props} />}
-      </Tab.Screen>
+      <Tab.Screen name="Home" children={() => <HomeStackNavigator />} />
       <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="Create" component={CreatePlaylistScreen} />
       <Tab.Screen name="Logout">

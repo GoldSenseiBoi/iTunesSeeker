@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -5,6 +6,7 @@ const keywords = ['rap', 'rock', 'love', 'summer', 'hiphop', 'pop', 'electro'];
 
 export default function HomeScreen() {
   const [albums, setAlbums] = useState([]);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchAlbums = async () => {
@@ -18,7 +20,10 @@ export default function HomeScreen() {
   }, []);
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.albumContainer}>
+    <TouchableOpacity
+      style={styles.albumContainer}
+      onPress={() => navigation.navigate('AlbumDetail', { collectionId: item.collectionId })}
+    >
       <Image source={{ uri: item.artworkUrl100 }} style={styles.albumImage} />
       <Text style={styles.albumTitle} numberOfLines={1}>{item.collectionName}</Text>
     </TouchableOpacity>
