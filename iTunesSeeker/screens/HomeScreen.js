@@ -1,12 +1,21 @@
-import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+    FlatList, Image,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity
+} from 'react-native';
 
 const keywords = ['rap', 'rock', 'love', 'summer', 'hiphop', 'pop', 'electro'];
 
 export default function HomeScreen() {
   const [albums, setAlbums] = useState([]);
+  const [playlists, setPlaylists] = useState([]);
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     const fetchAlbums = async () => {
@@ -19,7 +28,15 @@ export default function HomeScreen() {
     fetchAlbums();
   }, []);
 
-  const renderItem = ({ item }) => (
+  useEffect(() => {
+    const loadPlaylists = async () => {
+      const data = await AsyncStorage.getItem('playlists');
+      setPlaylists(data ? JSON.parse(data) : []);
+    };
+    loadPlaylists();
+  }, [isFocused]);
+
+  const renderAlbum = ({ item }) => (
     <TouchableOpacity
       style={styles.albumContainer}
       onPress={() => navigation.navigate('AlbumDetail', { collectionId: item.collectionId })}
@@ -29,27 +46,55 @@ export default function HomeScreen() {
     </TouchableOpacity>
   );
 
+  const renderPlaylist = ({ item }) => (
+    <TouchableOpacity
+      style={styles.playlistItem}
+      onPress={() => navigation.navigate('PlaylistDetail', { playlistId: item.id })}
+    >
+      <Image source={{ uri: item.image }} style={styles.playlistImage} />
+      <Text style={styles.playlistTitle}>{item.name}</Text>
+    </TouchableOpacity>
+  );
+
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.header}>Bienvenue sur iTunes Seeker !</Text>
+
       <Text style={styles.subheader}>Sélection aléatoire :</Text>
       <FlatList
         data={albums}
         keyExtractor={(item) => item.collectionId.toString()}
-        renderItem={renderItem}
+        renderItem={renderAlbum}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingVertical: 20 }}
+        contentContainerStyle={{ paddingBottom: 20 }}
       />
-    </View>
+
+      <Text style={styles.subheader}>Mes playlists</Text>
+      {playlists.length === 0 ? (
+        <Text style={styles.noPlaylist}>Aucune playlist pour l’instant</Text>
+      ) : (
+        <FlatList
+          data={playlists}
+          keyExtractor={(item) => item.id}
+          renderItem={renderPlaylist}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+        />
+      )}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, paddingTop: 40 },
+  container: { flex: 1, padding: 16 },
   header: { fontSize: 24, fontWeight: 'bold', marginBottom: 16 },
   subheader: { fontSize: 18, marginBottom: 10 },
   albumContainer: { marginRight: 12, alignItems: 'center', width: 120 },
   albumImage: { width: 100, height: 100, borderRadius: 8 },
   albumTitle: { marginTop: 6, textAlign: 'center', fontSize: 14 },
+  noPlaylist: { fontStyle: 'italic', color: '#888', marginBottom: 20 },
+  playlistItem: { marginRight: 12, alignItems: 'center' },
+  playlistImage: { width: 100, height: 100, borderRadius: 8 },
+  playlistTitle: { marginTop: 6, textAlign: 'center', fontSize: 14 },
 });

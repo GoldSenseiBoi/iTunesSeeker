@@ -7,6 +7,7 @@ import AlbumDetailScreen from '../screens/AlbumDetailScreen';
 import CreatePlaylistScreen from '../screens/CreatePlaylistScreen';
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
+import PlaylistDetailScreen from '../screens/PlaylistDetailScreen';
 import SearchScreen from '../screens/SearchScreen';
 
 const Tab = createBottomTabNavigator();
@@ -25,6 +26,11 @@ function HomeStackNavigator() {
         component={AlbumDetailScreen}
         options={{ title: 'Détail Album' }}
       />
+      <HomeStack.Screen
+        name="PlaylistDetail"
+        component={PlaylistDetailScreen}
+        options={{ title: 'Playlist' }}
+        />
     </HomeStack.Navigator>
   );
 }
