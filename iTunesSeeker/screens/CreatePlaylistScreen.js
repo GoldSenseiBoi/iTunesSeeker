@@ -1,10 +1,17 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from 'react';
-import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+    Alert,
+    Button, StyleSheet,
+    Text, TextInput,
+    View,
+} from 'react-native';
+import { useTheme } from '../context/ThemeContext';
 
 export default function CreatePlaylistScreen({ navigation }) {
   const [name, setName] = useState('');
   const [image, setImage] = useState('');
+  const { theme } = useTheme();
 
   const handleSave = async () => {
     if (!name || !image) {
@@ -13,12 +20,11 @@ export default function CreatePlaylistScreen({ navigation }) {
     }
 
     const newPlaylist = {
-        id: Date.now().toString(),
-        name,
-        image,
-        songs: [], // ← obligatoire pour le reste de l’app
-      };
-      
+      id: Date.now().toString(),
+      name,
+      image,
+      songs: [],
+    };
 
     const existing = await AsyncStorage.getItem('playlists');
     const playlists = existing ? JSON.parse(existing) : [];
@@ -30,19 +36,21 @@ export default function CreatePlaylistScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Créer une playlist</Text>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <Text style={[styles.title, { color: theme.text }]}>Créer une playlist</Text>
       <TextInput
         placeholder="Nom de la playlist"
         value={name}
         onChangeText={setName}
-        style={styles.input}
+        style={[styles.input, { color: theme.text, borderColor: theme.subtext }]}
+        placeholderTextColor={theme.subtext}
       />
       <TextInput
         placeholder="URL de l’image"
         value={image}
         onChangeText={setImage}
-        style={styles.input}
+        style={[styles.input, { color: theme.text, borderColor: theme.subtext }]}
+        placeholderTextColor={theme.subtext}
       />
       <Button title="Créer" onPress={handleSave} />
     </View>

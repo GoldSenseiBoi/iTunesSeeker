@@ -8,6 +8,7 @@ import {
     Text,
     TouchableOpacity
 } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
 
 const keywords = ['rap', 'rock', 'love', 'summer', 'hiphop', 'pop', 'electro'];
 
@@ -16,6 +17,7 @@ export default function HomeScreen() {
   const [playlists, setPlaylists] = useState([]);
   const navigation = useNavigation();
   const isFocused = useIsFocused();
+  const { theme } = useTheme();
 
   useEffect(() => {
     const fetchAlbums = async () => {
@@ -24,7 +26,6 @@ export default function HomeScreen() {
       const json = await response.json();
       setAlbums(json.results);
     };
-
     fetchAlbums();
   }, []);
 
@@ -42,7 +43,7 @@ export default function HomeScreen() {
       onPress={() => navigation.navigate('AlbumDetail', { collectionId: item.collectionId })}
     >
       <Image source={{ uri: item.artworkUrl100 }} style={styles.albumImage} />
-      <Text style={styles.albumTitle} numberOfLines={1}>{item.collectionName}</Text>
+      <Text style={[styles.albumTitle, { color: theme.text }]} numberOfLines={1}>{item.collectionName}</Text>
     </TouchableOpacity>
   );
 
@@ -52,15 +53,15 @@ export default function HomeScreen() {
       onPress={() => navigation.navigate('PlaylistDetail', { playlistId: item.id })}
     >
       <Image source={{ uri: item.image }} style={styles.playlistImage} />
-      <Text style={styles.playlistTitle}>{item.name}</Text>
+      <Text style={[styles.playlistTitle, { color: theme.text }]}>{item.name}</Text>
     </TouchableOpacity>
   );
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.header}>Bienvenue sur iTunes Seeker !</Text>
+    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
+      <Text style={[styles.header, { color: theme.text }]}>Bienvenue sur iTunes Seeker !</Text>
 
-      <Text style={styles.subheader}>Sélection aléatoire :</Text>
+      <Text style={[styles.subheader, { color: theme.text }]}>Sélection aléatoire :</Text>
       <FlatList
         data={albums}
         keyExtractor={(item) => item.collectionId.toString()}
@@ -70,9 +71,9 @@ export default function HomeScreen() {
         contentContainerStyle={{ paddingBottom: 20 }}
       />
 
-      <Text style={styles.subheader}>Mes playlists</Text>
+      <Text style={[styles.subheader, { color: theme.text }]}>Mes playlists</Text>
       {playlists.length === 0 ? (
-        <Text style={styles.noPlaylist}>Aucune playlist pour l’instant</Text>
+        <Text style={[styles.noPlaylist, { color: theme.subtext }]}>Aucune playlist pour l’instant</Text>
       ) : (
         <FlatList
           data={playlists}
@@ -93,7 +94,7 @@ const styles = StyleSheet.create({
   albumContainer: { marginRight: 12, alignItems: 'center', width: 120 },
   albumImage: { width: 100, height: 100, borderRadius: 8 },
   albumTitle: { marginTop: 6, textAlign: 'center', fontSize: 14 },
-  noPlaylist: { fontStyle: 'italic', color: '#888', marginBottom: 20 },
+  noPlaylist: { fontStyle: 'italic', marginBottom: 20 },
   playlistItem: { marginRight: 12, alignItems: 'center' },
   playlistImage: { width: 100, height: 100, borderRadius: 8 },
   playlistTitle: { marginTop: 6, textAlign: 'center', fontSize: 14 },

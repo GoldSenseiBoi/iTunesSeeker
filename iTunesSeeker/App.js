@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator } from 'react-native';
 
+import { ThemeProvider } from './context/ThemeContext';
 import TabNavigator from './navigation/TabNavigator';
 import LoginScreen from './screens/LoginScreen';
 
@@ -25,6 +26,7 @@ export default function App() {
   if (isLoading) return <ActivityIndicator size="large" style={{ flex: 1 }} />;
 
   return (
+    <ThemeProvider>
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {isLoggedIn ? (
@@ -38,5 +40,6 @@ export default function App() {
         )}
       </Stack.Navigator>
     </NavigationContainer>
+    </ThemeProvider>
   );
 }

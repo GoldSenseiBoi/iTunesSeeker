@@ -9,6 +9,8 @@ import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import PlaylistDetailScreen from '../screens/PlaylistDetailScreen';
 import SearchScreen from '../screens/SearchScreen';
+import ThemeToggleScreen from '../screens/ThemeToggleScreen';
+
 
 const Tab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
@@ -54,6 +56,8 @@ export default function TabNavigator({ setIsLoggedIn }) {
       <Tab.Screen name="Home" children={() => <HomeStackNavigator />} />
       <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="Create" component={CreatePlaylistScreen} />
+      <Tab.Screen name="Theme" component={ThemeToggleScreen} />
+
       <Tab.Screen name="Logout">
         {(props) => <LoginScreen {...props} setIsLoggedIn={setIsLoggedIn} logoutOnly />}
       </Tab.Screen>
