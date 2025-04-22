@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { signIn, signOut, signUp } from '../utils/auth';
 
 export default function LoginScreen({ setIsLoggedIn, logoutOnly }) {
@@ -13,10 +13,7 @@ export default function LoginScreen({ setIsLoggedIn, logoutOnly }) {
   }, []);
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('Erreur', 'Veuillez remplir tous les champs');
-      return;
-    }
+    if (!email || !password) return Alert.alert('Erreur', 'Veuillez remplir tous les champs');
     try {
       await signIn(email, password);
       setIsLoggedIn(true);
@@ -26,10 +23,7 @@ export default function LoginScreen({ setIsLoggedIn, logoutOnly }) {
   };
 
   const handleSignUp = async () => {
-    if (!email || !password) {
-      Alert.alert('Erreur', 'Veuillez remplir tous les champs');
-      return;
-    }
+    if (!email || !password) return Alert.alert('Erreur', 'Veuillez remplir tous les champs');
     try {
       await signUp(email, password);
       await signIn(email, password);
@@ -41,29 +35,69 @@ export default function LoginScreen({ setIsLoggedIn, logoutOnly }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>iTunes Seeker</Text>
+      <Text style={styles.title}>🎧 iTunes Seeker</Text>
+
       <TextInput
-        style={styles.input}
         placeholder="Email"
         autoCapitalize="none"
-        onChangeText={setEmail}
         value={email}
-      />
-      <TextInput
+        onChangeText={setEmail}
         style={styles.input}
+        placeholderTextColor="#aaa"
+      />
+
+      <TextInput
         placeholder="Mot de passe"
         secureTextEntry
-        onChangeText={setPassword}
         value={password}
+        onChangeText={setPassword}
+        style={styles.input}
+        placeholderTextColor="#aaa"
       />
-      <Button title="Connexion" onPress={handleLogin} />
-      <Button title="Créer un compte" onPress={handleSignUp} />
+
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Connexion</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={[styles.button, styles.secondary]} onPress={handleSignUp}>
+        <Text style={styles.buttonText}>Créer un compte</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 20 },
-  input: { borderWidth: 1, marginBottom: 12, padding: 8, borderRadius: 4 },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' },
+  container: { flex: 1, justifyContent: 'center', padding: 24, backgroundColor: '#f5f7fb' },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 32,
+    color: '#1e1e1e',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    fontSize: 16,
+    backgroundColor: '#fff',
+    color: '#333',
+  },
+  button: {
+    backgroundColor: '#1e90ff',
+    paddingVertical: 14,
+    borderRadius: 8,
+    marginTop: 12,
+    alignItems: 'center',
+  },
+  secondary: {
+    backgroundColor: '#4f4f4f',
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 16,
+  },
 });
