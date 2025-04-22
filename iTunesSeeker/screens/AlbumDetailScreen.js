@@ -12,7 +12,7 @@ export default function AlbumDetailScreen({ route }) {
   const { collectionId } = route.params;
   const [tracks, setTracks] = useState([]);
   const [sound, setSound] = useState(null);
-  const [playing, setPlaying] = useState(false);
+  const [playingId, setPlayingId] = useState(null);
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -31,21 +31,29 @@ export default function AlbumDetailScreen({ route }) {
     };
   }, [sound]);
 
-  const playPreview = async (url) => {
+  const playPreview = async (url, id) => {
     if (sound) {
       await sound.stopAsync();
       await sound.unloadAsync();
     }
     const { sound: newSound } = await Audio.Sound.createAsync({ uri: url });
     setSound(newSound);
+    setPlayingId(id);
     await newSound.playAsync();
-    setPlaying(true);
   };
 
   const pauseSound = async () => {
-    if (sound && playing) {
+    if (sound) {
       await sound.pauseAsync();
-      setPlaying(false);
+      setPlayingId(null);
+    }
+  };
+
+  const togglePreview = (item) => {
+    if (playingId === item.trackId) {
+      pauseSound();
+    } else {
+      playPreview(item.previewUrl, item.trackId);
     }
   };
 
@@ -59,16 +67,9 @@ export default function AlbumDetailScreen({ route }) {
           <View style={styles.trackItem}>
             <Text style={{ color: theme.text }}>{item.trackNumber}. {item.trackName}</Text>
             {item.previewUrl && (
-              <>
-                <TouchableOpacity onPress={() => playPreview(item.previewUrl)}>
-                  <Text style={[styles.preview, { color: theme.highlight }]}>▶️ Écouter un extrait</Text>
-                </TouchableOpacity>
-                {playing && (
-                  <TouchableOpacity onPress={pauseSound}>
-                    <Text style={[styles.preview, { color: theme.highlight }]}>⏸ Pause</Text>
-                  </TouchableOpacity>
-                )}
-              </>
+              <TouchableOpacity onPress={() => togglePreview(item)}>
+                <Text style={[styles.preview, { color: theme.highlight }]}>🎧 {playingId === item.trackId ? 'Pause' : 'Écouter un extrait'}</Text>
+              </TouchableOpacity>
             )}
           </View>
         )}
