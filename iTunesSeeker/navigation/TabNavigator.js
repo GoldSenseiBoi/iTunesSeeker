@@ -11,7 +11,6 @@ import PlaylistDetailScreen from '../screens/PlaylistDetailScreen';
 import SearchScreen from '../screens/SearchScreen';
 import ThemeToggleScreen from '../screens/ThemeToggleScreen';
 
-
 const Tab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
 
@@ -32,7 +31,7 @@ function HomeStackNavigator() {
         name="PlaylistDetail"
         component={PlaylistDetailScreen}
         options={{ title: 'Playlist' }}
-        />
+      />
     </HomeStack.Navigator>
   );
 }
@@ -48,6 +47,7 @@ export default function TabNavigator({ setIsLoggedIn }) {
           else if (route.name === 'Search') iconName = 'search';
           else if (route.name === 'Create') iconName = 'add-circle';
           else if (route.name === 'Logout') iconName = 'log-out';
+          else if (route.name === 'Theme') iconName = 'moon'; // 🌙 Icône pour Theme
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
@@ -57,7 +57,6 @@ export default function TabNavigator({ setIsLoggedIn }) {
       <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="Create" component={CreatePlaylistScreen} />
       <Tab.Screen name="Theme" component={ThemeToggleScreen} />
-
       <Tab.Screen name="Logout">
         {(props) => <LoginScreen {...props} setIsLoggedIn={setIsLoggedIn} logoutOnly />}
       </Tab.Screen>

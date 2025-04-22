@@ -117,6 +117,7 @@ export default function PlaylistDetailScreen({ route }) {
           {new Date(item.releaseDate).getFullYear()}
         </Text>
       </View>
+  
       {item.previewUrl && (
         <TouchableOpacity onPress={() => togglePreview(item)}>
           <Text style={[styles.playBtn, { color: theme.highlight }]}>
@@ -124,11 +125,17 @@ export default function PlaylistDetailScreen({ route }) {
           </Text>
         </TouchableOpacity>
       )}
+  
       <TouchableOpacity onPress={() => deleteTrack(item.trackId)}>
         <Text style={[styles.removeBtn, { color: 'red' }]}>🗑</Text>
       </TouchableOpacity>
+  
+      <TouchableOpacity onPress={() => navigation.navigate('TrackDetail', { track: item })}>
+        <Text style={[styles.detailBtn, { color: theme.highlight }]}>ℹ️</Text>
+      </TouchableOpacity>
     </View>
   );
+  
 
   if (!playlist) {
     return (
@@ -205,6 +212,10 @@ const styles = StyleSheet.create({
   name: { fontSize: 16, fontWeight: '600' },
   artist: { fontSize: 14 },
   year: { fontSize: 12 },
+  detailBtn: {
+    fontSize: 20,
+    marginLeft: 12,
+  },  
   playBtn: { fontSize: 18, marginLeft: 8, fontWeight: 'bold' },
   removeBtn: { fontSize: 18, marginLeft: 12, fontWeight: 'bold' },
   empty: { color: '#888', fontStyle: 'italic', textAlign: 'center', marginTop: 20 },

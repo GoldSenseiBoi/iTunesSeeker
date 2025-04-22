@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 import { Audio } from 'expo-av';
 import React, { useEffect, useState } from 'react';
 import {
@@ -21,6 +22,7 @@ export default function AlbumDetailScreen({ route }) {
   const [playingId, setPlayingId] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedTrack, setSelectedTrack] = useState(null);
+  const navigation = useNavigation();
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -111,6 +113,9 @@ export default function AlbumDetailScreen({ route }) {
       <TouchableOpacity onPress={() => openModal(item)}>
         <Text style={[styles.addBtn, { color: theme.highlight }]}>➕</Text>
       </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('TrackDetail', { track: item })}>
+        <Text style={[styles.detailBtn, { color: theme.highlight }]}>ℹ️</Text>
+      </TouchableOpacity>
     </View>
   );
 
@@ -175,6 +180,10 @@ const styles = StyleSheet.create({
   },
   addBtn: {
     fontSize: 22,
+    marginLeft: 12,
+  },
+  detailBtn: {
+    fontSize: 20,
     marginLeft: 12,
   },
   modalOverlay: {

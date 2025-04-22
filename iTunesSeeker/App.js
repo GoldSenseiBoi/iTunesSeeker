@@ -7,6 +7,7 @@ import { ActivityIndicator } from 'react-native';
 import { ThemeProvider } from './context/ThemeContext';
 import TabNavigator from './navigation/TabNavigator';
 import LoginScreen from './screens/LoginScreen';
+import TrackDetailScreen from './screens/TrackDetailScreen'; // 👈 AJOUT
 
 const Stack = createNativeStackNavigator();
 
@@ -27,19 +28,23 @@ export default function App() {
 
   return (
     <ThemeProvider>
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {isLoggedIn ? (
-          <Stack.Screen name="Home">
-            {(props) => <TabNavigator {...props} setIsLoggedIn={setIsLoggedIn} />}
-          </Stack.Screen>
-        ) : (
-          <Stack.Screen name="Login">
-            {(props) => <LoginScreen {...props} setIsLoggedIn={setIsLoggedIn} />}
-          </Stack.Screen>
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          {isLoggedIn ? (
+            <>
+              <Stack.Screen name="Home">
+                {(props) => <TabNavigator {...props} setIsLoggedIn={setIsLoggedIn} />}
+              </Stack.Screen>
+              <Stack.Screen name="TrackDetail" component={TrackDetailScreen} />
+              {/* 👆 Nouvelle route */}
+            </>
+          ) : (
+            <Stack.Screen name="Login">
+              {(props) => <LoginScreen {...props} setIsLoggedIn={setIsLoggedIn} />}
+            </Stack.Screen>
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
     </ThemeProvider>
   );
 }

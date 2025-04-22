@@ -1,13 +1,17 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native'; // ⬅️ en haut du fichier
+import { Audio } from 'expo-av';
+import React, { useEffect, useState } from 'react';
 import {
-    FlatList,
-    Image,
-    Modal, Pressable,
-    StyleSheet,
-    Text, TextInput,
-    TouchableOpacity,
-    View,
+  FlatList,
+  Image,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 
@@ -17,7 +21,16 @@ export default function SearchScreen() {
   const [playlists, setPlaylists] = useState([]);
   const [selectedTrack, setSelectedTrack] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [sound, setSound] = useState(null);
+  const [playingId, setPlayingId] = useState(null);
   const { theme } = useTheme();
+  const navigation = useNavigation(); // ⬅️ dans le composant
+
+  useEffect(() => {
+    return () => {
+      if (sound) sound.unloadAsync();
+    };
+  }, [sound]);
 
   const search = async () => {
     if (!query) return;
@@ -48,16 +61,61 @@ export default function SearchScreen() {
     setModalVisible(false);
   };
 
+  const playPreview = async (url, id) => {
+    if (sound) {
+      await sound.stopAsync();
+      await sound.unloadAsync();
+    }
+    const { sound: newSound } = await Audio.Sound.createAsync({ uri: url });
+    setSound(newSound);
+    setPlayingId(id);
+    await newSound.playAsync();
+  };
+
+  const pauseSound = async () => {
+    if (sound) {
+      await sound.pauseAsync();
+      setPlayingId(null);
+    }
+  };
+
+  const togglePreview = (item) => {
+    if (playingId === item.trackId) {
+      pauseSound();
+    } else {
+      playPreview(item.previewUrl, item.trackId);
+    }
+  };
+
   const renderTrack = ({ item }) => (
     <View style={styles.trackItem}>
       <Image source={{ uri: item.artworkUrl100 }} style={styles.trackImage} />
       <View style={{ flex: 1 }}>
-        <Text style={[styles.trackTitle, { color: theme.text }]}>{item.trackName}</Text>
-        <Text style={[styles.trackArtist, { color: theme.subtext }]}>{item.artistName}</Text>
+        <Text style={[styles.trackTitle, { color: theme.text }]} numberOfLines={1}>
+          {item.trackName}
+        </Text>
+        <Text style={[styles.trackArtist, { color: theme.subtext }]} numberOfLines={1}>
+          {item.artistName}
+        </Text>
+        <Text style={[styles.trackYear, { color: theme.subtext }]}>
+          {new Date(item.releaseDate).getFullYear()}
+        </Text>
         <TouchableOpacity onPress={() => openModal(item)}>
           <Text style={[styles.add, { color: theme.highlight }]}>➕ Ajouter à une playlist</Text>
         </TouchableOpacity>
       </View>
+  
+      {item.previewUrl && (
+        <TouchableOpacity onPress={() => togglePreview(item)}>
+          <Text style={[styles.playBtn, { color: theme.highlight }]}>
+            {playingId === item.trackId ? '⏸' : '▶️'}
+          </Text>
+        </TouchableOpacity>
+      )}
+  
+      <TouchableOpacity onPress={() => navigation.navigate('TrackDetail', { track: item })}>
+        <Text style={[styles.detailBtn, { color: theme.highlight }]}>ℹ️</Text>
+      </TouchableOpacity>
     </View>
   );
 
@@ -113,6 +171,8 @@ const styles = StyleSheet.create({
   trackImage: { width: 60, height: 60, borderRadius: 6, marginRight: 12 },
   trackTitle: { fontWeight: 'bold', fontSize: 16 },
   trackArtist: { fontSize: 14 },
+  trackYear: { fontSize: 12 },
+  playBtn: { fontSize: 18, marginLeft: 10 },
   add: { marginTop: 4 },
 
   modalOverlay: {
