@@ -103,6 +103,15 @@ export default function PlaylistDetailScreen({ route }) {
     }
   };
 
+  const deletePlaylist = async () => {
+    const data = await AsyncStorage.getItem('playlists');
+    const all = data ? JSON.parse(data) : [];
+    const updated = all.filter((p) => p.id !== playlistId);
+    await AsyncStorage.setItem('playlists', JSON.stringify(updated));
+    navigation.navigate('Home');
+  };
+  
+
   const renderItem = ({ item }) => (
     <View style={styles.item}>
       <Image source={{ uri: item.artworkUrl60 }} style={styles.thumb} />
@@ -153,6 +162,10 @@ export default function PlaylistDetailScreen({ route }) {
       <TouchableOpacity onPress={() => setEditVisible(true)}>
         <Text style={[styles.edit, { color: theme.highlight }]}>✏️ Modifier la playlist</Text>
       </TouchableOpacity>
+      <TouchableOpacity onPress={deletePlaylist}>
+        <Text style={styles.delete}>🗑 Supprimer la playlist</Text>
+      </TouchableOpacity>
+
 
       {playlist.songs?.length ? (
         <FlatList
@@ -215,7 +228,13 @@ const styles = StyleSheet.create({
   detailBtn: {
     fontSize: 20,
     marginLeft: 12,
-  },  
+  },delete: {
+  color: 'red',
+  textAlign: 'center',
+  marginBottom: 16,
+  fontWeight: 'bold',
+},
+
   playBtn: { fontSize: 18, marginLeft: 8, fontWeight: 'bold' },
   removeBtn: { fontSize: 18, marginLeft: 12, fontWeight: 'bold' },
   empty: { color: '#888', fontStyle: 'italic', textAlign: 'center', marginTop: 20 },
