@@ -2,7 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import {
-    FlatList, Image,
+    FlatList,
+    Image,
     ScrollView,
     StyleSheet,
     Text,
@@ -40,8 +41,7 @@ export default function HomeScreen() {
   const renderAlbum = ({ item }) => (
     <TouchableOpacity
       style={styles.albumContainer}
-      onPress={() => navigation.navigate('AlbumDetail', { collectionId: item.collectionId })}
-    >
+      onPress={() => navigation.navigate('AlbumDetail', { collectionId: item.collectionId })}>
       <Image source={{ uri: item.artworkUrl100 }} style={styles.albumImage} />
       <Text style={[styles.albumTitle, { color: theme.text }]} numberOfLines={1}>{item.collectionName}</Text>
     </TouchableOpacity>
@@ -50,52 +50,90 @@ export default function HomeScreen() {
   const renderPlaylist = ({ item }) => (
     <TouchableOpacity
       style={styles.playlistItem}
-      onPress={() => navigation.navigate('PlaylistDetail', { playlistId: item.id })}
-    >
+      onPress={() => navigation.navigate('PlaylistDetail', { playlistId: item.id })}>
       <Image source={{ uri: item.image }} style={styles.playlistImage} />
-      <Text style={[styles.playlistTitle, { color: theme.text }]}>{item.name}</Text>
+      <Text style={[styles.playlistTitle, { color: theme.text }]} numberOfLines={1}>{item.name}</Text>
     </TouchableOpacity>
   );
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
-      <Text style={[styles.header, { color: theme.text }]}>Bienvenue sur iTunes Seeker !</Text>
+      <Text style={[styles.headerText, { color: theme.text }]}>🎵 Découvre ta musique du moment</Text>
 
-      <Text style={[styles.subheader, { color: theme.text }]}>Sélection aléatoire :</Text>
       <FlatList
         data={albums}
-        keyExtractor={(item) => item.collectionId.toString()}
-        renderItem={renderAlbum}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        renderItem={renderAlbum}
+        keyExtractor={(item) => item.collectionId.toString()}
+        contentContainerStyle={styles.albumList}
       />
 
-      <Text style={[styles.subheader, { color: theme.text }]}>Mes playlists</Text>
-      {playlists.length === 0 ? (
-        <Text style={[styles.noPlaylist, { color: theme.subtext }]}>Aucune playlist pour l’instant</Text>
-      ) : (
-        <FlatList
-          data={playlists}
-          keyExtractor={(item) => item.id}
-          renderItem={renderPlaylist}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-        />
-      )}
+      <Text style={[styles.sectionTitle, { color: theme.text }]}>📁 Tes playlists</Text>
+
+      <FlatList
+        data={playlists}
+        numColumns={2}
+        renderItem={renderPlaylist}
+        keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={styles.playlistList}
+      />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16 },
-  header: { fontSize: 24, fontWeight: 'bold', marginBottom: 16 },
-  subheader: { fontSize: 18, marginBottom: 10 },
-  albumContainer: { marginRight: 12, alignItems: 'center', width: 120 },
-  albumImage: { width: 100, height: 100, borderRadius: 8 },
-  albumTitle: { marginTop: 6, textAlign: 'center', fontSize: 14 },
-  noPlaylist: { fontStyle: 'italic', marginBottom: 20 },
-  playlistItem: { marginRight: 12, alignItems: 'center' },
-  playlistImage: { width: 100, height: 100, borderRadius: 8 },
-  playlistTitle: { marginTop: 6, textAlign: 'center', fontSize: 14 },
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  albumList: {
+    marginBottom: 24,
+  },
+  albumContainer: {
+    marginRight: 12,
+    width: 120,
+    alignItems: 'center',
+  },
+  albumImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 12,
+  },
+  albumTitle: {
+    marginTop: 6,
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    marginBottom: 12,
+  },
+  playlistList: {
+    gap: 12,
+  },
+  playlistItem: {
+    flex: 1,
+    margin: 6,
+    alignItems: 'center',
+    backgroundColor: '#2222',
+    padding: 10,
+    borderRadius: 16,
+  },
+  playlistImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 12,
+    marginBottom: 8,
+  },
+  playlistTitle: {
+    fontSize: 14,
+    textAlign: 'center',
+  },
 });
