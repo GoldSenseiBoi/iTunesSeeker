@@ -2,12 +2,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import {
-    FlatList,
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 
@@ -41,50 +41,62 @@ export default function HomeScreen() {
   const renderAlbum = ({ item }) => (
     <TouchableOpacity
       style={styles.albumContainer}
-      onPress={() => navigation.navigate('AlbumDetail', { collectionId: item.collectionId })}>
+      onPress={() => navigation.navigate('AlbumDetail', { collectionId: item.collectionId })}
+    >
       <Image source={{ uri: item.artworkUrl100 }} style={styles.albumImage} />
-      <Text style={[styles.albumTitle, { color: theme.text }]} numberOfLines={1}>{item.collectionName}</Text>
+      <Text style={[styles.albumTitle, { color: theme.text }]} numberOfLines={1}>
+        {item.collectionName}
+      </Text>
     </TouchableOpacity>
   );
 
   const renderPlaylist = ({ item }) => (
     <TouchableOpacity
       style={styles.playlistItem}
-      onPress={() => navigation.navigate('PlaylistDetail', { playlistId: item.id })}>
+      onPress={() => navigation.navigate('PlaylistDetail', { playlistId: item.id })}
+    >
       <Image source={{ uri: item.image }} style={styles.playlistImage} />
-      <Text style={[styles.playlistTitle, { color: theme.text }]} numberOfLines={1}>{item.name}</Text>
+      <Text style={[styles.playlistTitle, { color: theme.text }]} numberOfLines={1}>
+        {item.name}
+      </Text>
     </TouchableOpacity>
   );
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
-      <Text style={[styles.headerText, { color: theme.text }]}>🎵 Découvre ta musique du moment</Text>
+    <FlatList
+      data={playlists}
+      keyExtractor={(item) => item.id.toString()}
+      numColumns={2}
+      renderItem={renderPlaylist}
+      ListEmptyComponent={
+        <Text style={[styles.albumTitle, { color: theme.subtext }]}>Aucune playlist pour l’instant</Text>
+      }
+      ListHeaderComponent={
+        <View style={{ marginBottom: 24 }}>
+          <Text style={[styles.headerText, { color: theme.text }]}>
+            🎵 Découvre ta musique du moment
+          </Text>
 
-      <FlatList
-        data={albums}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        renderItem={renderAlbum}
-        keyExtractor={(item) => item.collectionId.toString()}
-        contentContainerStyle={styles.albumList}
-      />
+          <FlatList
+            data={albums}
+            horizontal
+            keyExtractor={(item) => item.collectionId.toString()}
+            renderItem={renderAlbum}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.albumList}
+          />
 
-      <Text style={[styles.sectionTitle, { color: theme.text }]}>📁 Tes playlists</Text>
-
-      <FlatList
-        data={playlists}
-        numColumns={2}
-        renderItem={renderPlaylist}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.playlistList}
-      />
-    </ScrollView>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>📁 Tes playlists</Text>
+        </View>
+      }
+      contentContainerStyle={[styles.container, { backgroundColor: theme.background }]}
+    />
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     padding: 16,
   },
   headerText: {
@@ -114,9 +126,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     marginBottom: 12,
-  },
-  playlistList: {
-    gap: 12,
   },
   playlistItem: {
     flex: 1,
