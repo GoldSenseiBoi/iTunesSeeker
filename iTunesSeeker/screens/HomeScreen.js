@@ -11,7 +11,31 @@ import {
 } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 
-const keywords = ['rap', 'rock', 'love', 'summer', 'hiphop', 'pop', 'electro'];
+const keywords = [
+  // Pop Internationale
+  'Taylor Swift', 'Ed Sheeran', 'Ariana Grande', 'Justin Bieber', 'Harry Styles',
+  'Lady Gaga', 'Bruno Mars', 'Katy Perry', 'Shawn Mendes', 'Camila Cabello',
+  
+  // R&B/Hip-Hop US
+  'Drake', 'Post Malone', 'Kendrick Lamar', 'Cardi B', 'Nicki Minaj',
+  'Megan Thee Stallion', 'Lil Nas X', 'Jack Harlow', 'Lizzo', 'Doja Cat',
+  
+  // Latino/Reggaeton
+  'Bad Bunny', 'J Balvin', 'Maluma', 'Karol G', 'Anuel AA',
+  'Ozuna', 'Daddy Yankee', 'Rauw Alejandro', 'Sech', 'Myke Towers',
+  
+  // K-Pop
+  'BTS', 'BLACKPINK', 'TWICE', 'Stray Kids', 'EXO',
+  'NCT 127', 'SEVENTEEN', 'ITZY', 'TXT', 'Red Velvet',
+  
+  // Français
+  'Aya Nakamura', 'Jul', 'Ninho', 'Dadju', 'Soolking',
+  'Nekfeu', 'Orelsan', 'Angèle', 'Maes', 'Gazo',
+  
+  // Rock/Alternatif
+  'Coldplay', 'Imagine Dragons', 'Twenty One Pilots', 'Arctic Monkeys', 'Tame Impala',
+  'The 1975', 'Muse', 'Foo Fighters', 'Red Hot Chili Peppers', 'Green Day'
+];
 
 export default function HomeScreen() {
   const [albums, setAlbums] = useState([]);
